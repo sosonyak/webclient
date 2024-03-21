@@ -20,13 +20,12 @@ public:
     widget(QWidget *parent = nullptr);
     ~widget();
 
-    QString socket_name = "TCP";
-    QTcpSocket Socket_;
-    // QSslSocket Socket_;
-    // QUdpSocket Socket_;
+    QString socket_name = "";
+    QAbstractSocket* Socket_;
 
     void cb_setting();
     void buttonEnabled();
+    QAbstractSocket* createSocket(const QString& name);
 
 public slots:
     void doConnected();
