@@ -21,7 +21,7 @@ public:
     ~widget();
 
     QString socket_name = "";
-    QAbstractSocket* Socket_;
+    QAbstractSocket* Socket_ = new QTcpSocket;
 
     void cb_setting();
     void buttonEnabled();

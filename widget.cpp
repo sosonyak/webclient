@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include <iostream>
 
 widget::widget(QWidget *parent)
     : QMainWindow(parent)
@@ -7,14 +8,14 @@ widget::widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QObject::connect(Socket_, &QAbstractSocket::connected, this, &widget::doConnected);
-    QObject::connect(Socket_, &QAbstractSocket::disconnected, this, &widget::doDisconnected);
-    QObject::connect(Socket_, &QAbstractSocket::readyRead, this, &widget::doReadyRead);
-
     cb_setting();
     socket_name = ui->cbSocket->currentText().toUtf8();
     Socket_ = createSocket(socket_name);
     buttonEnabled();
+
+    QObject::connect(Socket_, &QAbstractSocket::connected, this, &widget::doConnected);
+    QObject::connect(Socket_, &QAbstractSocket::disconnected, this, &widget::doDisconnected);
+    QObject::connect(Socket_, &QAbstractSocket::readyRead, this, &widget::doReadyRead);
 }
 
 widget::~widget()
@@ -58,6 +59,12 @@ QAbstractSocket* widget::createSocket(const QString& name){
 void widget::on_pbConnect_clicked()
 {
     if (Socket_) delete Socket_;
+    Socket_ = createSocket(socket_name);
+
+    // to reconnect with socket
+    QObject::connect(Socket_, &QAbstractSocket::connected, this, &widget::doConnected);
+    QObject::connect(Socket_, &QAbstractSocket::disconnected, this, &widget::doDisconnected);
+    QObject::connect(Socket_, &QAbstractSocket::readyRead, this, &widget::doReadyRead);
 
     if (socket_name == "TCP"){
         dynamic_cast<QTcpSocket*>(Socket_)->connectToHost(ui->leHost->text(), ui->lePort->text().toUShort());
@@ -95,4 +102,3 @@ void widget::on_cbSocket_currentTextChanged(const QString &arg1)
     if (socket_name!="SSL") ui->lePort->insert((QString)"80");
     else ui->lePort->insert((QString)"443");
 }
-
