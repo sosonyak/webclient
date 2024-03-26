@@ -6,6 +6,8 @@
 #include <QSslSocket>
 #include <QUdpSocket>
 
+#include <QJsonObject>
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class widget;
@@ -15,6 +17,9 @@ QT_END_NAMESPACE
 class widget : public QMainWindow
 {
     Q_OBJECT
+
+private:
+    QJsonObject widgetState;
 
 public:
     widget(QWidget *parent = nullptr);
@@ -26,6 +31,10 @@ public:
     void cb_setting();
     void buttonEnabled();
     QAbstractSocket* createSocket(const QString& name);
+
+    void saveWidgetStateToJson(const QString &fileName);
+    void loadWidgetStateFromJson(const QString &fileName);
+
 
 public slots:
     void doConnected();
